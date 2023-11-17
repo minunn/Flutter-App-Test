@@ -11,7 +11,7 @@ class _AnimationsWidgetState extends State<AnimationsWidget>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _animation;
-  double toAnimate = 0; // Set the initial value here
+  late ValueNotifier<double> _toAnimateNotifier;
 
   @override
   void initState() {
@@ -21,21 +21,23 @@ class _AnimationsWidgetState extends State<AnimationsWidget>
       duration: Duration(seconds: 5),
     );
 
+    _toAnimateNotifier = ValueNotifier<double>(0);
+
     _animation = Tween<double>(begin: 0, end: 1).animate(_animationController)
       ..addListener(() {
-        // Ensure the widget rebuilds when the animation value changes
-        setState(() {});
+        _toAnimateNotifier.value = _animation.value;
       });
   }
 
   @override
   void dispose() {
     _animationController.dispose();
+    _toAnimateNotifier.dispose();
     super.dispose();
   }
 
   void _startAnimation() {
-    _animationController.value = toAnimate; // Set the initial value
+    _animationController.value = _toAnimateNotifier.value;
     if (_animationController.status == AnimationStatus.completed) {
       _animationController.reverse();
     } else {
@@ -45,8 +47,7 @@ class _AnimationsWidgetState extends State<AnimationsWidget>
 
   void _resetAnimation() {
     _animationController.reset();
-    toAnimate = 0; // Reset the external value
-    setState(() {}); // Ensure the widget rebuilds
+    _toAnimateNotifier.value = 0;
   }
 
   @override
@@ -62,10 +63,15 @@ class _AnimationsWidgetState extends State<AnimationsWidget>
             // Progress bar
             Container(
               width: 200, // Adjust the width as needed
-              child: LinearProgressIndicator(
-                value: _animation.value,
-                backgroundColor: Colors.grey[300],
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+              child: ValueListenableBuilder<double>(
+                valueListenable: _toAnimateNotifier,
+                builder: (context, value, child) {
+                  return LinearProgressIndicator(
+                    value: value,
+                    backgroundColor: Colors.grey[300],
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+                  );
+                },
               ),
             ),
             const SizedBox(height: 20.0),
