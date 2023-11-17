@@ -145,65 +145,85 @@ class _TodoListState extends State<TodoList> {
           delegate: SliverChildBuilderDelegate(
             (context, index) {
               final mainTask = _todoItems[index];
-              return ExpansionTile(
-                title: Row(
-                  children: [
-                    Text(mainTask),
-                    const Spacer(),
-                    IconButton(
-                      icon: const Icon(Icons.delete),
-                      onPressed: () => _deleteMainTask(mainTask),
+              return Dismissible(
+                key: Key(mainTask),
+                background: Container(
+                  color: Colors.red,
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Icon(
+                        Icons.delete,
+                        color: Colors.white,
+                      ),
                     ),
-                  ],
+                  ),
                 ),
-                children: [
-                  ..._subTasks[mainTask]!.asMap().entries.map((entry) {
-                    final SubTask subTask = entry.value;
-                    return ListTile(
-                      title: Row(
-                        children: [
-                          Text(subTask.name),
-                          const Spacer(),
-                          IconButton(
-                            icon: const Icon(Icons.delete),
-                            onPressed: () => _deleteSubTask(mainTask, subTask),
-                          ),
-                        ],
-                      ),
-                      trailing: Checkbox(
-                        value: subTask.isDone,
-                        onChanged: (bool? value) {
-                          setState(() {
-                            subTask.isDone = value!;
-                          });
-                        },
-                      ),
-                    );
-                  }).toList(),
-                  Row(
+                onDismissed: (direction) {
+                  _deleteMainTask(mainTask);
+                },
+                child: ExpansionTile(
+                  title: Row(
                     children: [
-                      Expanded(
-                        child: TextField(
-                          controller: _subTaskTextController,
-                          decoration:
-                              const InputDecoration(labelText: 'Enter subtask'),
-                          onSubmitted: (subTaskName) {
-                            _addSubTask(mainTask, SubTask(name: subTaskName));
-                            _subTaskTextController.clear();
-                          },
-                        ),
-                      ),
-                      ElevatedButton(
-                        child: const Text('Add Subtask'),
-                        onPressed: () {
-                          _addSubTask(mainTask,
-                              SubTask(name: _subTaskTextController.text));
-                          _subTaskTextController.clear();
-                        },
+                      Text(mainTask),
+                      const Spacer(),
+                      IconButton(
+                        icon: const Icon(Icons.delete),
+                        onPressed: () => _deleteMainTask(mainTask),
                       ),
                     ],
                   ),
-                ],
+                  children: [
+                    ..._subTasks[mainTask]!.asMap().entries.map((entry) {
+                      final SubTask subTask = entry.value;
+                      return ListTile(
+                        title: Row(
+                          children: [
+                            Text(subTask.name),
+                            const Spacer(),
+                            IconButton(
+                              icon: const Icon(Icons.delete),
+                              onPressed: () =>
+                                  _deleteSubTask(mainTask, subTask),
+                            ),
+                          ],
+                        ),
+                        trailing: Checkbox(
+                          value: subTask.isDone,
+                          onChanged: (bool? value) {
+                            setState(() {
+                              subTask.isDone = value!;
+                            });
+                          },
+                        ),
+                      );
+                    }).toList(),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: _subTaskTextController,
+                            decoration: const InputDecoration(
+                                labelText: 'Enter subtask'),
+                            onSubmitted: (subTaskName) {
+                              _addSubTask(mainTask, SubTask(name: subTaskName));
+                              _subTaskTextController.clear();
+                            },
+                          ),
+                        ),
+                        ElevatedButton(
+                          child: const Text('Add Subtask'),
+                          onPressed: () {
+                            _addSubTask(mainTask,
+                                SubTask(name: _subTaskTextController.text));
+                            _subTaskTextController.clear();
+                          },
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               );
             },
             childCount: _todoItems.length,
