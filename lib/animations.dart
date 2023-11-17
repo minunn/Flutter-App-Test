@@ -11,6 +11,7 @@ class _AnimationsWidgetState extends State<AnimationsWidget>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _animation;
+  double toAnimate = 0; // Set the initial value here
 
   @override
   void initState() {
@@ -34,6 +35,7 @@ class _AnimationsWidgetState extends State<AnimationsWidget>
   }
 
   void _startAnimation() {
+    _animationController.value = toAnimate; // Set the initial value
     if (_animationController.status == AnimationStatus.completed) {
       _animationController.reverse();
     } else {
@@ -43,6 +45,8 @@ class _AnimationsWidgetState extends State<AnimationsWidget>
 
   void _resetAnimation() {
     _animationController.reset();
+    toAnimate = 0; // Reset the external value
+    setState(() {}); // Ensure the widget rebuilds
   }
 
   @override
