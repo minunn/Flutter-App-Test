@@ -3,6 +3,7 @@ import 'artwork.dart';
 import 'artwork_details.dart';
 import 'todo_list.dart';
 import 'chrono.dart';
+import 'animations.dart';
 
 // Widget principal de l'application
 class ArtGalleryApp extends StatefulWidget {
@@ -45,7 +46,7 @@ class _ArtGalleryAppState extends State<ArtGalleryApp> {
           : ThemeData.light(), // Changement de thème basé sur isNightMode
       debugShowCheckedModeBanner: false,
       home: DefaultTabController(
-        length: 3,
+        length: 4,
         child: Scaffold(
           appBar: AppBar(
             title: Text('The test app !'),
@@ -54,6 +55,7 @@ class _ArtGalleryAppState extends State<ArtGalleryApp> {
                 Tab(text: 'Art Gallery'),
                 Tab(text: 'Todo List'),
                 Tab(text: 'Chrono'),
+                Tab(text: 'Animations'),
               ],
             ),
           ),
@@ -127,6 +129,7 @@ class _ArtGalleryAppState extends State<ArtGalleryApp> {
                   TodoList(),
                   // Onglet Chronomètre
                   Chronometer(),
+                  AnimationsWidget(),
                 ],
               ),
               // Bouton de changement de thème
