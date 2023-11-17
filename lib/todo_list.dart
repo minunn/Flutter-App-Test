@@ -145,6 +145,7 @@ class _TodoListState extends State<TodoList> {
           delegate: SliverChildBuilderDelegate(
             (context, index) {
               final mainTask = _todoItems[index];
+              // utilisation de Dismissible pour supprimer une tâche principale
               return Dismissible(
                 key: Key(mainTask),
                 background: Container(
@@ -168,34 +169,54 @@ class _TodoListState extends State<TodoList> {
                     children: [
                       Text(mainTask),
                       const Spacer(),
-                      IconButton(
-                        icon: const Icon(Icons.delete),
-                        onPressed: () => _deleteMainTask(mainTask),
-                      ),
+                      // IconButton(
+                      //   icon: const Icon(Icons.delete),
+                      //   onPressed: () => _deleteMainTask(mainTask),
+                      // ),
                     ],
                   ),
                   children: [
                     ..._subTasks[mainTask]!.asMap().entries.map((entry) {
                       final SubTask subTask = entry.value;
-                      return ListTile(
-                        title: Row(
-                          children: [
-                            Text(subTask.name),
-                            const Spacer(),
-                            IconButton(
-                              icon: const Icon(Icons.delete),
-                              onPressed: () =>
-                                  _deleteSubTask(mainTask, subTask),
+                      // utilisation de Dismissible pour supprimer une sous-tâche
+                      return Dismissible(
+                        key: Key(subTask.name),
+                        background: Container(
+                          color: Colors.red,
+                          child: Align(
+                            alignment: Alignment.centerRight,
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Icon(
+                                Icons.delete,
+                                color: Colors.white,
+                              ),
                             ),
-                          ],
+                          ),
                         ),
-                        trailing: Checkbox(
-                          value: subTask.isDone,
-                          onChanged: (bool? value) {
-                            setState(() {
-                              subTask.isDone = value!;
-                            });
-                          },
+                        onDismissed: (direction) {
+                          _deleteSubTask(mainTask, subTask);
+                        },
+                        child: ListTile(
+                          title: Row(
+                            children: [
+                              Text(subTask.name),
+                              const Spacer(),
+                              // IconButton(
+                              //   icon: const Icon(Icons.delete),
+                              //   onPressed: () =>
+                              //       _deleteSubTask(mainTask, subTask),
+                              // ),
+                            ],
+                          ),
+                          trailing: Checkbox(
+                            value: subTask.isDone,
+                            onChanged: (bool? value) {
+                              setState(() {
+                                subTask.isDone = value!;
+                              });
+                            },
+                          ),
                         ),
                       );
                     }).toList(),
